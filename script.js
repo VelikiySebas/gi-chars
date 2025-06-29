@@ -6,7 +6,7 @@ const dayjs = require('dayjs');
 const utc = require('dayjs/plugin/utc');
 const timezone = require('dayjs/plugin/timezone');
 const { EnkaClient } = require("enka-network-api");
-const { profilepictures, characters } = require('enkanetwork.js');
+const { profilepictures } = require('enkanetwork.js');
 
 require('dotenv').config();
 
@@ -28,13 +28,13 @@ if (!GITHUB_USER || !REPO_NAME || !BRANCH) {
 }
 
 const ELEMENT_MAP = {
-  Electric: 4,
-  Fire: 7,
-  Grass: 3,
-  Ice: 2,
-  Rock: 5,
-  Water: 6,
-  Wind: 1,
+  Electric: 14,
+  Fire: 17,
+  Grass: 13,
+  Ice: 12,
+  Rock: 15,
+  Water: 16,
+  Wind: 11,
 };
 
 const WEAPON_MAP = {
@@ -91,7 +91,7 @@ async function loadCharacter(id, character, isUploadToGitHub) {
   const iconName = character.icon.name.split('_').pop().toLowerCase();
 
   // Формируем URL для загрузки изображений
-  const iconUrl = `https://gensh.honeyhunterworld.com/img/${iconName}_${lastIdNumbers}_icon.webp`;
+  const iconUrl = character.icon.url; // `https://gensh.honeyhunterworld.com/img/${iconName}_${lastIdNumbers}_icon.webp`; <- Honeyhunter обрезает иконки
   const gachaCardUrl = `https://gensh.honeyhunterworld.com/img/${iconName}_${lastIdNumbers}_gacha_card.webp`;
   const gachaSplashUrl = `https://gensh.honeyhunterworld.com/img/${iconName}_${lastIdNumbers}_gacha_splash.webp`;
 
@@ -130,7 +130,7 @@ async function loadCharacter(id, character, isUploadToGitHub) {
   }
 
   // Пути для загрузки
-  const iconFilePath = `images/characters/icons/${id}.webp`;
+  const iconFilePath = `images/characters/icons/${id}.png`;
   const gachaCardFilePath = `images/characters/gacha-card/${id}.webp`;
   const gachaSplashFilePath = `images/characters/gacha-splash/${id}.webp`;
 

@@ -12,7 +12,7 @@ BRANCH=master
 
 запускать
 ```
-  npm run update-cache & npm run script.js
+  npm run update-cache & npm run load
 ```
 
 вся инфа в characters.json weapons.json
