@@ -51,9 +51,9 @@ const refreshCollection = async (coll, data, originalFile) => {
   for (const [index, dataItem] of data.entries()) {
     const refreshItem = { ...dataItem };
     delete refreshItem._id;
-    let item = await collection.findOneAndUpdate({ enkaId: dataItem.enkaId }, { $set: refreshItem }, { upsert: true, new: true });
+    let item = await collection.findOneAndUpdate({ enkaId: dataItem.enkaId, attribute: dataItem.attribute }, { $set: refreshItem }, { upsert: true, new: true });
     if (!item) {
-      item = await collection.findOne({ enkaId: dataItem.enkaId });
+      item = await collection.findOne({ enkaId: dataItem.enkaId, attribute: dataItem.attribute });
     }
     if (!dataItem._id || dataItem._id !== item._id) {
       originalFile[index]._id = item._id;
