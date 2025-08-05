@@ -319,10 +319,10 @@ duplexer2@~0.1.4:
   dependencies:
     readable-stream "^2.0.2"
 
-enka-network-api@^5.0.6:
-  version "5.0.6"
-  resolved "https://registry.yarnpkg.com/enka-network-api/-/enka-network-api-5.0.6.tgz#f1707237c26458ef902c3e14c5579fe907d9a06c"
-  integrity sha512-gGoi7bISOOAQbOreM3v3VdO6sp5NSnrbHv1Q3Ru4M1pUY1sZkIuzw/JP4Q0COD98OYC6DfPlFsT1tdyQog6Q6g==
+enka-network-api@^5.0.8:
+  version "5.0.8"
+  resolved "https://registry.yarnpkg.com/enka-network-api/-/enka-network-api-5.0.8.tgz#c21939dd43334a29a5679b6f3f5bc320e62b0e74"
+  integrity sha512-43+f+eGi39bpPQXWmzlZcRI+QM0c9I73JLSmqmFypD7P9O0AvGyCd8MlOUFSk342JalmbZ7xfL9rsVlcER6VWw==
   dependencies:
     axios "^1.4.0"
     config_file.js "^1.4.1"
@@ -338,7 +338,7 @@ enka-system@^0.3.7:
     axios "^1.5.0"
     config_file.js "^1.4.0"
 
-enkanetwork.js@^2.10.9:
+enkanetwork.js@^2.10.10:
   version "2.10.10"
   resolved "https://registry.yarnpkg.com/enkanetwork.js/-/enkanetwork.js-2.10.10.tgz#9402811630bce1690967b90f45e3f540a7596e70"
   integrity sha512-DGQsUY8Dsn1KT73OVkGDBdX9m9EmpHgNPjMXh6kIK6sV/CtK7dr6X6qL1dt5Kib7ANN2xiwc2Li6zGdAtCzwMQ==

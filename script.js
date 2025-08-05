@@ -246,10 +246,38 @@ async function processWeapons(isUploadToGitHub = true, isUpdateFile = true) {
   }
 }
 
+async function processAvatars(isUploadToGitHub = true, isUpdateFile = true) {
+  const gitHubUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/${BRANCH}`;
+  const dirPath = 'images/avatars';
+
+  const results = [];
+  for (const { icon } of Object.values(profilepictures)) {
+    const path = `${dirPath}/${icon}.png`;
+    const avatarGitHubUrl = `${gitHubUrl}/${path}`;
+    try {
+      const avatarWebpUrl = `https://enka.network/ui/${icon}.png`;
+      const buffer = (await axios.get(avatarWebpUrl, { responseType: 'arraybuffer' })).data;
+      if (isUploadToGitHub) {
+        await uploadToGitHub(path, buffer, `Upload avatar with filename: ${icon}`);
+      }
+      results.push({ avatarSrc: avatarGitHubUrl, createdAt: new Date() });
+    } catch (error) {
+      console.error(`Ошибка при загрузке файлов на GitHub аватара ${icon}:`, error);
+      continue;
+    }
+  }
+
+  const resultFilePath = 'avatars.json';
+  if (isUpdateFile) {
+    fs.writeFileSync(resultFilePath, JSON.stringify(results), 'utf8');
+  }
+}
+
 // Основная функция
 async function fetchAndProcessData(isUploadToGitHub = true, isUpdateFiles = true) {
   // await processCharacters(isUploadToGitHub, isUpdateFiles);
   // await processWeapons(isUploadToGitHub, isUpdateFiles);
+  // await processAvatars(isUploadToGitHub, isUpdateFiles);
 }
 
 // Запуск
