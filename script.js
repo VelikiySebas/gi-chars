@@ -6,7 +6,6 @@ const dayjs = require('dayjs');
 const utc = require('dayjs/plugin/utc');
 const timezone = require('dayjs/plugin/timezone');
 const { EnkaClient } = require("enka-network-api");
-const { profilepictures } = require('enkanetwork.js');
 
 require('dotenv').config();
 
@@ -52,6 +51,11 @@ async function uploadToGitHub(filePath, contentBuffer, commitMessage) {
 
   // Содержимое в base64
   const encodedContent = Buffer.from(contentBuffer).toString('base64');
+
+  if (fs.existsSync(filePath)) {
+    console.log(`Файл ${fileName} уже существует. Пропуск загрузки`)
+    return;
+  }
 
   try {
     const res = await axios.put(
@@ -251,25 +255,29 @@ async function processAvatars(isUploadToGitHub = true, isUpdateFile = true) {
   const dirPath = 'images/avatars';
 
   const results = [];
-  for (const { icon } of Object.values(profilepictures)) {
-    const path = `${dirPath}/${icon}.png`;
+  for (const { iconPath } of Object.values(enka.cachedAssetsManager.getExcelData("ProfilePictureExcelConfigData"))) {
+    const path = `${dirPath}/${iconPath}.png`;
     const avatarGitHubUrl = `${gitHubUrl}/${path}`;
     try {
-      const avatarWebpUrl = `https://enka.network/ui/${icon}.png`;
+      const avatarWebpUrl = `https://enka.network/ui/${iconPath}.png`;
       const buffer = (await axios.get(avatarWebpUrl, { responseType: 'arraybuffer' })).data;
       if (isUploadToGitHub) {
-        await uploadToGitHub(path, buffer, `Upload avatar with filename: ${icon}`);
+        await uploadToGitHub(path, buffer, `Upload avatar with filename: ${iconPath}`);
       }
       results.push({ avatarSrc: avatarGitHubUrl, createdAt: new Date() });
     } catch (error) {
-      console.error(`Ошибка при загрузке файлов на GitHub аватара ${icon}:`, error);
+      console.error(`Ошибка при загрузке файлов на GitHub аватара ${iconPath}:`, error);
       continue;
     }
   }
 
   const resultFilePath = 'avatars.json';
   if (isUpdateFile) {
-    fs.writeFileSync(resultFilePath, JSON.stringify(results), 'utf8');
+    const file = JSON.parse(fs.readFileSync(resultFilePath, 'utf8'));
+    fs.writeFileSync(resultFilePath, JSON.stringify(results.map((result) => {
+      const existingAvatar = file.find(({ avatarSrc }) => result.avatarSrc === avatarSrc);
+      return existingAvatar ?? result;
+    })), 'utf8');
   }
 }
 
