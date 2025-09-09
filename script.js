@@ -83,13 +83,6 @@ async function updateFile(filePath, data) {
   fs.writeFileSync(filePath, JSON.stringify(data), 'utf8');
 }
 
-// async function updateEnemiesFile(filePath, data) {
-//   const fileData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-//   if (fileData?._id) data._id = fileData._id;
-//   fs.writeFileSync(filePath, JSON.stringify(data), 'utf8');
-// }
-// console.log(profilepictures);
-
 async function loadCharacter(id, character, isUploadToGitHub) {
   const lastIdNumbers = id.toString().slice(-3);
   const iconName = character.icon.name.split('_').pop().toLowerCase();
@@ -105,8 +98,8 @@ async function loadCharacter(id, character, isUploadToGitHub) {
 
   // Получение icon
   try {
-    const iconResponse = await axios.get(iconUrl, { responseType: 'arraybuffer' });
-    iconUrlBuffer = iconResponse.data;
+    const iconResponse = await fetch(iconUrl);
+    iconUrlBuffer = await iconResponse.arrayBuffer();
   } catch (error) {
     console.error(`Ошибка при загрузке iconUrl для персонажа ${character._nameId}:`, error);
   }
@@ -250,6 +243,26 @@ async function processWeapons(isUploadToGitHub = true, isUpdateFile = true) {
   }
 }
 
+const getHomdgcatPath = (fileName) => {
+  if (fileName.startsWith("UI_AvatarIcon_")) {
+    return `Avatar/${fileName}.png`;
+  } else if (fileName.startsWith("UI_RelicIcon_")) {
+    return `Relic/${fileName}.png`;
+  } else if (fileName.startsWith("UI_EquipIcon_")) {
+    return `Weapon/${fileName}.png`;
+  } else if (fileName.startsWith("UI_ItemIcon_")) {
+    return `Mat/${fileName}.png`;
+  } else if (fileName.startsWith("Skill_")) {
+    return `AvatarSkill/${fileName}.png`;
+  } else if (fileName.startsWith("UI_Gacha_AvatarImg_")) {
+    return `Gacha/${fileName}.png`;
+  } else if (fileName.startsWith("UI_NameCardPic_") && fileName.endsWith("_P")) {
+    return `Avatar/${fileName}.png`;
+  } else {
+    throw new Error(`Unhandled file name: ${fileName}`);
+  }
+}
+
 async function processAvatars(isUploadToGitHub = true, isUpdateFile = true) {
   const gitHubUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/${BRANCH}`;
   const dirPath = 'images/avatars';
@@ -259,9 +272,10 @@ async function processAvatars(isUploadToGitHub = true, isUpdateFile = true) {
     const path = `${dirPath}/${iconPath}.png`;
     const avatarGitHubUrl = `${gitHubUrl}/${path}`;
     try {
-      const avatarWebpUrl = `https://enka.network/ui/${iconPath}.png`;
-      const buffer = (await axios.get(avatarWebpUrl, { responseType: 'arraybuffer' })).data;
       if (isUploadToGitHub) {
+        const avatarWebpUrl = `https://homdgcat.wiki/homdgcat-res/${getHomdgcatPath(iconPath)}`;
+        const response = await fetch(avatarWebpUrl)
+        const buffer = await response.arrayBuffer();
         await uploadToGitHub(path, buffer, `Upload avatar with filename: ${iconPath}`);
       }
       results.push({ avatarSrc: avatarGitHubUrl, createdAt: new Date() });
